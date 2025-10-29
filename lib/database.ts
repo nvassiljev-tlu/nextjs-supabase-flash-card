@@ -92,9 +92,19 @@ export async function updateStatistics(cardId: string, isCorrect: boolean) {
       .eq('card_id', cardId)
       .select();
     return { data: data as Statistics[] | null, error };
+  } else {
+    const { data, error } = await supabase
+      .from('statistics')
+      .insert([{
+        card_id: cardId,
+        correct_count: isCorrect ? 1 : 0,
+        wrong_count: !isCorrect ? 1 : 0,
+        last_attempt: new Date().toISOString(),
+        attempt_date: new Date().toISOString().split('T')[0]
+      }])
+      .select();
+    return { data: data as Statistics[] | null, error }; 
   }
-  
-  return { data: null, error: null };
 }
 
 export async function getStatistics() {
