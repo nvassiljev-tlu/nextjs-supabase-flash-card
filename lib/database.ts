@@ -3,7 +3,6 @@ import { Category, Card, Statistics } from '@/types/database';
 
 const supabase = createClient();
 
-// CREATE Category
 export async function createCategory(name: string) {
   const { data, error } = await supabase
     .from('categories')
@@ -12,7 +11,6 @@ export async function createCategory(name: string) {
   return { data: data as Category[] | null, error };
 }
 
-// READ Categories
 export async function getCategories() {
   const { data, error } = await supabase
     .from('categories')
@@ -21,7 +19,6 @@ export async function getCategories() {
   return { data: data as Category[] | null, error };
 }
 
-// CREATE Card
 export async function createCard(categoryId: string, question: string, answer: string) {
   const { data, error } = await supabase
     .from('cards')
@@ -37,7 +34,6 @@ export async function createCard(categoryId: string, question: string, answer: s
   return { data: data as Card[] | null, error };
 }
 
-// READ Cards by Category
 export async function getCardsByCategory(categoryId: string) {
   const { data, error } = await supabase
     .from('cards')
@@ -54,7 +50,6 @@ export async function getCardsByCategory(categoryId: string) {
   return { data: data as Card[] | null, error };
 }
 
-// UPDATE Card
 export async function updateCard(cardId: string, question: string, answer: string) {
   const { data, error } = await supabase
     .from('cards')
@@ -64,7 +59,6 @@ export async function updateCard(cardId: string, question: string, answer: strin
   return { data: data as Card[] | null, error };
 }
 
-// DELETE Card
 export async function deleteCard(cardId: string) {
   const { error } = await supabase
     .from('cards')
@@ -73,7 +67,6 @@ export async function deleteCard(cardId: string) {
   return { error };
 }
 
-// UPDATE Statistics
 export async function updateStatistics(cardId: string, isCorrect: boolean) {
   const { data: currentStats } = await supabase
     .from('statistics')
@@ -104,7 +97,6 @@ export async function updateStatistics(cardId: string, isCorrect: boolean) {
   return { data: null, error: null };
 }
 
-// GET Statistics
 export async function getStatistics() {
   const { data, error } = await supabase
     .from('statistics')
