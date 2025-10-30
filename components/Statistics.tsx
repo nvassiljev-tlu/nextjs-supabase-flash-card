@@ -1,7 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Stack, Title, Card, Text, Table } from "@mantine/core";
-import { getStatistics } from "@/lib/database";
+import { getStatistics, clearAllStatistics } from "@/lib/database";
+import { Button } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+
 import { Statistics as StatisticsType } from "@/types/database";
 
 interface Summary {
@@ -41,6 +44,28 @@ export default function Statistics() {
     }
   }
 
+  async function handleClearAllStats() {
+    if (
+      !window.confirm("Kas oled kindel, et soovid kogu statistika kustutada?")
+    )
+      return;
+    const { error } = await clearAllStatistics();
+    if (error) {
+      notifications.show({
+        title: "Viga",
+        message: "Statistika kustutamine ebaõnnestus",
+        color: "red",
+      });
+    } else {
+      notifications.show({
+        title: "Kustutatud",
+        message: "Kogu statistika kustutati!",
+        color: "green",
+      });
+      await loadStatistics();
+    }
+  }
+
   const successRate =
     summary.total > 0
       ? ((summary.correct / summary.total) * 100).toFixed(1)
@@ -49,6 +74,13 @@ export default function Statistics() {
   return (
     <Stack>
       <Title order={2}>Statistika</Title>
+      <Button
+        color="red"
+        onClick={handleClearAllStats}
+        style={{ alignSelf: "flex-start" }}
+      >
+        Kustuta kogu statistika
+      </Button>
 
       <Card shadow="sm" padding="lg">
         <Stack gap="xs">

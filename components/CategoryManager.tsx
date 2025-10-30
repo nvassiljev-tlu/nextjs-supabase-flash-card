@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { TextInput, Button, Card, Group, Stack, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { createCategory, getCategories } from "@/lib/database";
+import { createCategory, getCategories, deleteCategory } from "@/lib/database";
 import { Category } from "@/types/database";
 
 interface CategoryManagerProps {
@@ -53,6 +53,30 @@ export default function CategoryManager({
     }
   }
 
+  async function handleDeleteCategory(categoryId: string) {
+    if (
+      !window.confirm(
+        "Kustuta see kategooria? Kõik selle kaardid kustutatakse."
+      )
+    )
+      return;
+    const { error } = await deleteCategory(categoryId);
+    if (error) {
+      notifications.show({
+        title: "Viga",
+        message: "Kategooria kustutamine ebaõnnestus",
+        color: "red",
+      });
+    } else {
+      notifications.show({
+        title: "Kustutatud",
+        message: "Kategooria kustutati!",
+        color: "green",
+      });
+      loadCategories();
+    }
+  }
+
   return (
     <Stack>
       <Title order={2}>Kategooriad</Title>
@@ -70,10 +94,31 @@ export default function CategoryManager({
             key={cat.id}
             shadow="sm"
             padding="lg"
-            onClick={() => onSelectCategory(cat)}
-            style={{ cursor: "pointer" }}
+            style={{ cursor: "pointer", position: "relative" }}
           >
-            <Title order={4}>{cat.name}</Title>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span onClick={() => onSelectCategory(cat)} style={{ flex: 1 }}>
+                <Title order={4}>{cat.name}</Title>
+              </span>
+              <Button
+                color="red"
+                size="xs"
+                variant="light"
+                style={{ marginLeft: 8 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteCategory(cat.id);
+                }}
+              >
+                Kustuta
+              </Button>
+            </div>
           </Card>
         ))}
       </Stack>

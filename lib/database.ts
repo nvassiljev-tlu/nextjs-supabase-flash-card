@@ -122,3 +122,19 @@ export async function getStatistics() {
     `);
   return { data: data as Statistics[] | null, error };
 }
+
+export async function clearAllStatistics() {
+  const { error } = await supabase
+    .from('statistics')
+    .delete()
+    .gt('id', 0);
+  return { error };
+}
+
+export async function deleteCategory(categoryId: string) {
+  const { error } = await supabase
+    .from('categories')
+    .delete()
+    .eq('id', categoryId);
+  return { error };
+}
